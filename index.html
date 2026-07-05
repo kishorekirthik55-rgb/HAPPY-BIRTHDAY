@@ -499,9 +499,9 @@
         100% { transform: translateY(-10px); }  
     }  
 
-    /* --- UPDATED: Perfectly Paced Stream Engine --- */  
+    /* --- UPDATED: 14s total duration makes the animation slow, smooth, and majestic --- */  
     .waterfall-flight {  
-        animation: bottomToTopStream 8s linear forwards;  
+        animation: bottomToTopStream 14s linear forwards;  
     }  
 
     @keyframes bottomToTopStream {  
@@ -650,10 +650,10 @@
           
         spawnWaterfallingCard();  
           
-        /* --- CHANGED: 4000ms (4 seconds) perfectly aligns with the 8-second total flight time. 
-           This means exactly when an active card hits the 50% middle mark of its stream, 
-           the next card spawns seamlessly from the bottom dock! --- */  
-        waterfallInterval = setInterval(spawnWaterfallingCard, 4000);  
+        /* --- CHANGED: Spawning interval set to 7000ms (7 seconds). 
+           Since total flight time is 14s, this guarantees the exact moment 
+           one card crosses the 50% middle mark, the next card spawns below. --- */  
+        waterfallInterval = setInterval(spawnWaterfallingCard, 7000);  
     }  
 
     function spawnWaterfallingCard() {  
@@ -739,4 +739,4 @@
 </script>
 
 </body>  
-</html>
+    </html>
