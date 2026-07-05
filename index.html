@@ -1,11 +1,13 @@
-<!DOCTYPE html>  <html lang="en">  
+<!DOCTYPE html>  
+<html lang="en">  
 <head>  
     <meta charset="UTF-8" />  
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />  
     <title>Birthday Wish & Celebration Stream</title>  
     <link rel="preconnect" href="https://fonts.googleapis.com" />  
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />  
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />  <style>  
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />  
+<style>  
     /* --- Base Layout & Normalization --- */  
     * {  
         box-sizing: border-box;  
@@ -497,16 +499,16 @@
         100% { transform: translateY(-10px); }  
     }  
 
-    /* --- UPDATED: Beautiful, Smooth & Lively Stream Engine --- */  
+    /* --- UPDATED: Perfectly Paced Stream Engine --- */  
     .waterfall-flight {  
-        animation: bottomToTopStream 10s linear forwards; /* Speeded up from 18s to smoothly glide out of the way */  
+        animation: bottomToTopStream 8s linear forwards;  
     }  
 
     @keyframes bottomToTopStream {  
         0% { transform: translate3d(0, calc(var(--container-h) + 50px), 0) scale(0.95) rotate(0deg); }  
-        22% { transform: translate3d(var(--sway-1), var(--y-start), 0) scale(1.06) rotate(var(--rot-1)); }  
-        50% { transform: translate3d(var(--sway-2), calc(var(--y-start) - 280px), 0) scale(1.08) rotate(var(--rot-2)); }  
-        78% { transform: translate3d(var(--sway-3), calc(var(--y-start) - 560px), 0) scale(1.05) rotate(var(--rot-3)); }  
+        25% { transform: translate3d(var(--sway-1), var(--y-start), 0) scale(1.06) rotate(var(--rot-1)); }  
+        50% { transform: translate3d(var(--sway-2), calc(var(--y-start) - 250px), 0) scale(1.08) rotate(var(--rot-2)); }  
+        75% { transform: translate3d(var(--sway-3), calc(var(--y-start) - 500px), 0) scale(1.05) rotate(var(--rot-3)); }  
         100% { transform: translate3d(0, -180px, 0) scale(0.98) rotate(0deg); }  
     }  
 </style>
@@ -648,8 +650,10 @@
           
         spawnWaterfallingCard();  
           
-        /* --- UPDATED: Spawns a new card every 2.8 seconds instead of 4.8s --- */  
-        waterfallInterval = setInterval(spawnWaterfallingCard, 2800);  
+        /* --- CHANGED: 4000ms (4 seconds) perfectly aligns with the 8-second total flight time. 
+           This means exactly when an active card hits the 50% middle mark of its stream, 
+           the next card spawns seamlessly from the bottom dock! --- */  
+        waterfallInterval = setInterval(spawnWaterfallingCard, 4000);  
     }  
 
     function spawnWaterfallingCard() {  
