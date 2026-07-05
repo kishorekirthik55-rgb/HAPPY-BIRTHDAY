@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Birthday Wish & Celebration Stream</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* --- Base Layout & Normalization --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0c0b0d;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Device Container Frame --- */
+        .app-container {
+            width: 100%;
+            max-width: 412px; 
+            height: 100vh;
+            max-height: 915px;
+            position: relative;
+            background: #0c0b0d;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+        }
+
+        @media (min-width: 481px) {
+            .app-container {
+                height: 95vh;
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.06);
+            }
+        }
+
+        /* --- Welcome Envelope Screen Panel Layer --- */
+        .welcome-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f0e6f6; /* Soft lavender background */
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease;
+            padding: 20px 0;
+        }
+
+        .welcome-screen.is-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* --- Top Greeting Heading Word Options --- */
+        .header-title {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            font-size: 1.6rem;
+            color: #d9534f;
+            font-weight: 800;
+            margin-bottom: -40px; /* Adjusted to sit elegantly above the scaled envelope */
+            text-align: center;
+            width: 100%;
+            letter-spacing: 1.5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            z-index: 102;
+            padding: 0 15px;
+        }
+
+        /* --- SCALED DOWN ORIGINAL ENVELOPE STYLES --- */
+        .envlope-wrapper {
+            height: 380px;
+            position: relative;
+            width: 100%;
+            /* Perfectly scales down the structural layout frame globally for mobile screens */
+            transform: scale(0.85); 
+            transform-origin: center center;
+        }
+
+        #envelope {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            margin-left: auto;
+            margin-right: auto;
+            top: 150px;
+            background-color: #d9534f; /* Warm romantic red */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .front {
+            position: absolute;
+            width: 0;
+            height: 0;
+            z-index: 3;
+        }
+
+        .flap {
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-bottom: 82px solid transparent;
+            border-top: 98px solid #d9534f; /* Same romantic red */
+            transform-origin: top;
+            pointer-events: none;
+        }
+
+        .pocket {
+            border-left: 140px solid #f5a3a2; /* Soft pinkish red for the pocket */
+            border-right: 140px solid #f5a3a2;
+            border-bottom: 90px solid #ff6f61; /* Lighter romantic red */
+            border-top: 90px solid transparent;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+        }
+
+        .letter {
+            position: relative;
+            background-color: #fff;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 90%;
+            top: 5%;
+            border-radius: 6px;
+            box-shadow: 0 2px 26px rgba(0, 0, 0, 0.12);
+            font-family: "Dancing Script", cursive;
+        }
+
+        .letter:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .words {
+            position: absolute;
+            left: 10%;
+            width: 80%;
+            height: 14%;
+            background-color: #ffe6e6; /* Light romantic tone */
+        }
+
+        .words.line1 {
+            top: 10%;
+            width: 25%;
+            height: 7%;
+            font-size: 0.7rem;
+        }
+
+        .words.line2 {
+            top: 30%;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #400716;
+        }
+
+        .words.line3 {
+            top: 50%;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #400716;
+        }
+
+        .words.line4 {
+            top: 70%;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #400716;
+        }
+
+        /* --- Envelope Animations & States --- */
+        #envelope.open .flap {
+            transform: rotateX(180deg);
+            transition: transform 0.4s ease, z-index 0.6s;
+            z-index: 1;
+        }
+
+        #envelope.close .flap {
+            transform: rotateX(0deg);
+            transition: transform 0.4s 0.6s ease, z-index 1s;
+            z-index: 5;
+        }
+
+        #envelope.close .letter {
+            transform: translateY(0px);
+            transition: transform 0.4s ease, z-index 1s;
+            z-index: 1;
+        }
+
+        #envelope.open .letter {
+            transform: translateY(-100px);
+            transition: transform 0.4s 0.6s ease, z-index 0.6s;
+            z-index: 2;
+        }
+
+        /* --- Original Floating Flying Hearts --- */
+        .hearts {
+            position: absolute;
+            top: 90px;
+            left: 0;
+            right: 0;
+            z-index: 2;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: 0;
+            right: 10%;
+            pointer-events: none;
+        }
+
+        .heart:before,
+        .heart:after {
+            position: absolute;
+            content: "";
+            left: 50px;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            background: #e60073; /* Deep romantic pink */
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+            pointer-events: none;
+        }
+
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        #envelope.close .heart {
+            opacity: 0;
+            animation: none;
+        }
+
+        #envelope.open .a1 {
+            left: 20%;
+            transform: scale(0.6);
+            opacity: 1;
+            animation: slideUp 4s linear 1, sideSway 2s ease-in-out 4 alternate;
+            animation-fill-mode: forwards;
+            animation-delay: 0.7s;
+        }
+
+        #envelope.open .a2 {
+            left: 55%;
+            transform: scale(1);
+            opacity: 1;
+            animation: slideUp 5s linear 1, sideSway 4s ease-in-out 2 alternate;
+            animation-fill-mode: forwards;
+            animation-delay: 0.7s;
+        }
+
+        #envelope.open .a3 {
+            left: 10%;
+            transform: scale(0.8);
+            opacity: 1;
+            animation: slideUp 7s linear 1, sideSway 2s ease-in-out 6 alternate;
+            animation-fill-mode: forwards;
+            animation-delay: 0.7s;
+        }
+
+        @keyframes slideUp {
+            0% { top: 0; }
+            100% { top: -600px; }
+        }
+
+        @keyframes sideSway {
+            0% { margin-left: 0px; }
+            100% { margin-left: 50px; }
+        }
+
+        /* --- Buttons Style Layout --- */
+        .reset {
+            text-align: center;
+            z-index: 105;
+            margin-top: -20px;
+        }
+
+        .reset button {
+            font-weight: 800;
+            font-style: normal;
+            transition: all 0.1s linear;
+            background-color: transparent;
+            border: solid 2px #d9534f;
+            border-radius: 4px;
+            color: #d9534f;
+            display: inline-block;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin: 5px;
+            padding: 10px;
+            line-height: 1em;
+            text-decoration: none;
+            min-width: 120px;
+            cursor: pointer;
+        }
+
+        .reset button:hover {
+            background-color: #d9534f;
+            color: #fff;
+        }
+
+        /* --- MAIN WATERFALL TIMELINE STAGE SECTION --- */
+        .hero-section {
+            width: 100%;
+            height: 70vh;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6) contrast(1.05);
+            transition: src 0.5s ease-in-out; /* Smooth transition when changing backgrounds */
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to bottom, rgba(12, 11, 13, 0) 0%, rgba(12, 11, 13, 0.8) 50%, rgba(12, 11, 13, 1) 100%);
+            pointer-events: none;
+        }
+
+        .tray-section {
+            width: 100%;
+            height: 30vh;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 16px;
+            position: relative;
+            background-color: #0c0b0d;
+            z-index: 5;
+        }
+
+       
+
+        .flight-stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .flying-wrapper {
+            position: absolute;
+            width: 28%;
+            aspect-ratio: 3 / 4;
+            will-change: transform;
+            z-index: 15;
+            transform: translate3d(0, 110vh, 0);
+            pointer-events: auto; /* ENABLES CLICK ON FLOATING CARDS */
+            cursor: pointer;
+        }
+
+        /* SPECIAL FINAL CARD: Big size and centered horizontally */
+        .flying-wrapper.final-card-style {
+            width: 55% !important;
+            left: 22.5% !important;
+            z-index: 30;
+        }
+
+        .flying-card {
+            width: 100%;
+            height: 100%;
+            border-radius: 11px;
+            overflow: hidden;
+            border: 1.8px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+            background: #161518;
+        }
+
+        .flying-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .carrier-heart {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle at 35% 35%, #ffa6bf 0%, #ff2a6d 65%, #940024 100%);
+            clip-path: path('M12 4.419C12.448 3.84 13.332 3 14.786 3 17.388 3 19 5.169 19 7.72c0 2.971-2.427 5.093-6.432 8.647L12 17l-.568-.533C7.427 12.813 5 10.69 5 7.72 5 5.169 6.612 3 9.214 3c1.454 0 2.338.84 2.786 1.419z');
+            filter: drop-shadow(0 2px 8px rgba(255, 42, 109, 0.8));
+            z-index: 20;
+        }
+
+        .theme-white .carrier-heart {
+            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #eae5da 60%, #948f85 100%);
+            filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.6));
+        }
+
+        /* --- UPGRADED: Final End Screen Text Header Layout & Appearance --- */
+        .ending-wish-overlay {
+            position: absolute;
+            top: 40%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 40;
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+            pointer-events: none;
+            transition: opacity 1.8s cubic-bezier(0.19, 1, 0.22, 1), transform 1.8s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 0 24px;
+        }
+
+        .ending-wish-overlay.reveal {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            animation: textFloatEffect 4s ease-in-out infinite alternate;
+            animation-delay: 1.8s;
+        }
+
+        .ending-wish-text {
+            font-family: "Montserrat", -apple-system, sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.2;
+            color: #f5e9ee;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .ending-wish-text span {
+            display: block;
+            font-family: "Dancing Script", cursive;
+            font-size: 4.2rem;
+            font-weight: 700;
+            font-style: normal;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            text-transform: none;
+            background: linear-gradient(45deg, #ffd9e6, #ffffff, #ffd9e6, #ffffff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShine 5s linear infinite;
+            filter: drop-shadow(0 4px 18px rgba(255, 255, 255, 0.35));
+        }
+
+        /* Ambient subtle backdrop panel to maximize pop contrast */
+        .ending-wish-overlay::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 130px;
+            background: radial-gradient(circle, rgba(255, 42, 109, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gradientShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        @keyframes textFloatEffect {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        /* --- Beautiful, Slow-Drifting Stream Curve Motion Path Engine --- */
+        .waterfall-flight {
+            animation: bottomToTopStream 14s linear forwards; /* Slowed down from 9.5s to 14s for smooth drifting */
+        }
+
+        @keyframes bottomToTopStream {
+            0% { transform: translate3d(0, calc(var(--container-h) + 50px), 0) scale(0.95) rotate(0deg); }
+            22% { transform: translate3d(var(--sway-1), var(--y-start), 0) scale(1.06) rotate(var(--rot-1)); }
+            50% { transform: translate3d(var(--sway-2), calc(var(--y-start) - 280px), 0) scale(1.08) rotate(var(--rot-2)); }
+            78% { transform: translate3d(var(--sway-3), calc(var(--y-start) - 560px), 0) scale(1.05) rotate(var(--rot-3)); }
+            100% { transform: translate3d(0, -180px, 0) scale(0.98) rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="main-container">
+        
+        <!-- Welcome Screen Overlay featuring your exact Envelope Structure -->
+        <div class="welcome-screen" id="welcome-panel">
+            <h1 class="header-title">HAPPY BIRTHDAY ENJOY THE DAY</h1>
+            
+            <div class="envlope-wrapper">
+                <div id="envelope" class="close">
+                    <div class="front flap"></div>
+                    <div class="front pocket"></div>
+                    <div class="letter">
+                        <div class="words line1">To: Hyy frnd</div>
+                        <div class="words line2">Happy Birthday to you!</div>
+                        <div class="words line3">Have an absolutely amazing day</div>
+                        <div class="words line4">and enjoy every moment!</div>
+                    </div>
+                    <div class="hearts">
+                        <div class="heart a1"></div>
+                        <div class="heart a2"></div>
+                        <div class="heart a3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="reset">
+                <button id="open">Open</button>
+                <button id="reset">Close</button>
+            </div>
+        </div>
+
+        <!-- Main Stream Background Assets Group -->
+        <section class="hero-section">
+            <img id="main-hero" class="hero-image" src="" alt="Backdrop">
+        </section>
+
+        <!-- Dynamic Dock Alignments Tray Base -->
+        <section class="tray-section">
+            <div class="card-dock" id="dock-0"></div>
+            <div class="card-dock" id="dock-1"></div>
+            <div class="card-dock" id="dock-2"></div>
+        </section>
+
+        <!-- Flight Stream Stage Overlay Rendering Container -->
+        <div class="flight-stage" id="stage"></div>
+
+        <!-- Final Reveal Birthday Greetings Layer overlay -->
+        <div class="ending-wish-overlay" id="final-wish-screen">
+            <h2 class="ending-wish-text">HAPPY BIRTHDAY <br><span>JAYASREE 🤍</span></h2>
+        </div>
+    </div>
+
+    <!-- Script Assets Infrastructure Modules -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        const heroImage = "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783243752252.png";
+        
+        const photos = [
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783243984334.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244365311.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244416707.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244577917.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244619544.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783246094336.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244704931.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244791150.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244834015.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244919334.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783244969632.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245020729.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245101697.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245155220.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245193368.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245238855.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245285659.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245387051.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245415889.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245443024.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245474161.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245503521.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245786374.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245836383.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245872981.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245922067.jpg",
+            "https://cdn.jsdelivr.net/gh/kishorekirthik55-rgb/image-storage@main/images/img_1783245962308.jpg"
+        ];
+
+        let imagePointer = 0;
+        let currentDockIndex = 0; // Tracks columns sequentially
+        let changeLayoutTimer = null;
+        let waterfallInterval = null;
+        const stage = document.getElementById('stage');
+        const container = document.getElementById('main-container');
+
+        // --- Audio Element Configuration ---
+        const birthdayAudio = new Audio('audio/Remo Bgm.mp3'); 
+        birthdayAudio.loop = true; 
+
+        function fetchNextImageUrl() {
+            const url = photos[imagePointer];
+            imagePointer = (imagePointer + 1) % photos.length;
+            return url;
+        }
+
+        $(document).ready(function () {
+            var envelope = $("#envelope");
+            var btn_open = $("#open");
+            var btn_reset = $("#reset");
+
+            document.getElementById('main-hero').src = heroImage;
+
+            envelope.click(function () { openLetter(); });
+            btn_open.click(function () { openLetter(); });
+            btn_reset.click(function () { closeLetter(); });
+
+            function openLetter() {
+                if(envelope.hasClass("open")) return;
+                envelope.addClass("open").removeClass("close");
+                changeLayoutTimer = setTimeout(startPhotoWaterfall, 4000);
+            }
+
+            function closeLetter() {
+                envelope.addClass("close").removeClass("open");
+                if (changeLayoutTimer) clearTimeout(changeLayoutTimer);
+                if (waterfallInterval) clearInterval(waterfallInterval);
+                birthdayAudio.pause();
+                birthdayAudio.currentTime = 0;
+                document.getElementById('welcome-panel').classList.remove('is-hidden');
+                document.getElementById('final-wish-screen').classList.remove('reveal');
+                document.getElementById('main-hero').src = heroImage; // Reset background image to default
+                stage.innerHTML = '';
+                imagePointer = 0;
+                currentDockIndex = 0;
+            }
+        });
+
+        // --- Core Pure One-By-One Engine ---
+        function startPhotoWaterfall() {
+            document.getElementById('welcome-panel').classList.add('is-hidden');
+            
+            birthdayAudio.play().catch(error => {
+                console.log("Audio playback delayed or blocked by browser security rules:", error);
+            });
+            
+            // Release the first image immediately
+            spawnWaterfallingCard();
+            
+            // Periodically release exactly 1 image at a time every 3.8 seconds
+            waterfallInterval = setInterval(spawnWaterfallingCard, 3800);
+        }
+
+        function spawnWaterfallingCard() {
+            // Stop generating new images if we cycled through the complete deck
+            if (imagePointer === 0 && document.querySelectorAll('.flying-wrapper').length > 0) {
+                clearInterval(waterfallInterval);
+                return;
+            }
+
+            const url = fetchNextImageUrl();
+            const isFinalCard = url.includes("img_1783245962308.jpg");
+
+            // Cycle lanes smoothly: left (0), middle (1), right (2)
+            let dockIndex = currentDockIndex;
+            currentDockIndex = (currentDockIndex + 1) % 3;
+
+            const containerRect = container.getBoundingClientRect();
+            const containerHeight = containerRect.height;
+            
+            // Safe horizontal alignment ranges
+            let horizontalPercentageStart = 6; 
+            if (dockIndex === 1) horizontalPercentageStart = 38;
+            if (dockIndex === 2) horizontalPercentageStart = 68;
+
+            const wrapper = document.createElement('div');
+            const theme = Math.random() > 0.5 ? 'theme-white' : 'theme-pink';
+            
+            if (isFinalCard) {
+                wrapper.className = `flying-wrapper waterfall-flight ${theme} final-card-style`;
+            } else {
+                wrapper.className = `flying-wrapper waterfall-flight ${theme}`;
+            }
+
+            wrapper.style.top = "0px";
+            wrapper.style.left = `${horizontalPercentageStart}%`;
+
+            let s1, s2, s3, r1, r2, r3;
+            if (isFinalCard) {
+                s1 = 0; s2 = 0; s3 = 0;
+                r1 = 0; r2 = 0; r3 = 0;
+            } else {
+                const safeMaxSwayLeft = -horizontalPercentageStart + 2;
+                const safeMaxSwayRight = (100 - 28) - horizontalPercentageStart - 2;
+                const pctToPx = containerRect.width / 100;
+                
+                s1 = ((Math.random() * (safeMaxSwayRight - safeMaxSwayLeft) + safeMaxSwayLeft) * pctToPx * 0.3).toFixed(1);
+                s2 = ((Math.random() * (safeMaxSwayRight - safeMaxSwayLeft) + safeMaxSwayLeft) * pctToPx * 0.6).toFixed(1);
+                s3 = ((Math.random() * (safeMaxSwayRight - safeMaxSwayLeft) + safeMaxSwayLeft) * pctToPx * 0.4).toFixed(1);
+                
+                r1 = (Math.random() * 8 - 4).toFixed(1);
+                r2 = (Math.random() * 14 - 7).toFixed(1);
+                r3 = (Math.random() * 8 - 4).toFixed(1);
+            }
+
+            let TargetDockY = containerHeight * 0.72;
+
+            wrapper.style.setProperty('--y-start', `${TargetDockY}px`);
+            wrapper.style.setProperty('--container-h', `${containerHeight}px`);
+            wrapper.style.setProperty('--sway-1', `${s1}px`);
+            wrapper.style.setProperty('--sway-2', `${s2}px`);
+            wrapper.style.setProperty('--sway-3', `${s3}px`);
+            wrapper.style.setProperty('--rot-1', `${r1}deg`);
+            wrapper.style.setProperty('--rot-2', `${r2}deg`);
+            wrapper.style.setProperty('--rot-3', `${r3}deg`);
+
+            wrapper.innerHTML = `
+                <div class="carrier-heart"></div>
+                <div class="flying-card">
+                    <img src="${url}" alt="Celebration Image">
+                </div>
+            `;
+
+            // NEW: Background Change Handler when card is clicked
+            wrapper.addEventListener('click', () => {
+                document.getElementById('main-hero').src = url;
+            });
+
+            stage.appendChild(wrapper);
+
+            wrapper.addEventListener('animationend', () => {
+                wrapper.remove();
+                if (isFinalCard) {
+                    document.getElementById('final-wish-screen').classList.add('reveal');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
