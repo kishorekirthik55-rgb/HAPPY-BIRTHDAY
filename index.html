@@ -499,16 +499,17 @@
         100% { transform: translateY(-10px); }  
     }  
 
-    /* --- UPDATED: 14s total duration makes the animation slow, smooth, and majestic --- */  
+    /* --- 14s total duration makes the animation slow, smooth, and majestic --- */  
     .waterfall-flight {  
         animation: bottomToTopStream 14s linear forwards;  
     }  
 
+    /* --- FIXED: Distributed travel segments evenly so the speed does not rush after passing the center --- */  
     @keyframes bottomToTopStream {  
         0% { transform: translate3d(0, calc(var(--container-h) + 50px), 0) scale(0.95) rotate(0deg); }  
-        25% { transform: translate3d(var(--sway-1), var(--y-start), 0) scale(1.06) rotate(var(--rot-1)); }  
-        50% { transform: translate3d(var(--sway-2), calc(var(--y-start) - 250px), 0) scale(1.08) rotate(var(--rot-2)); }  
-        75% { transform: translate3d(var(--sway-3), calc(var(--y-start) - 500px), 0) scale(1.05) rotate(var(--rot-3)); }  
+        25% { transform: translate3d(var(--sway-1), calc(var(--y-start) * 0.75), 0) scale(1.06) rotate(var(--rot-1)); }  
+        50% { transform: translate3d(var(--sway-2), calc(var(--y-start) * 0.50), 0) scale(1.08) rotate(var(--rot-2)); }  
+        75% { transform: translate3d(var(--sway-3), calc(var(--y-start) * 0.25), 0) scale(1.05) rotate(var(--rot-3)); }  
         100% { transform: translate3d(0, -180px, 0) scale(0.98) rotate(0deg); }  
     }  
 </style>
@@ -650,7 +651,7 @@
           
         spawnWaterfallingCard();  
           
-        /* --- CHANGED: Spawning interval set to 7000ms (7 seconds). 
+        /* --- Spawning interval set to 7000ms (7 seconds). 
            Since total flight time is 14s, this guarantees the exact moment 
            one card crosses the 50% middle mark, the next card spawns below. --- */  
         waterfallInterval = setInterval(spawnWaterfallingCard, 7000);  
@@ -737,6 +738,5 @@
         });  
     }  
 </script>
-
 </body>  
-                        </html>
+</html>
